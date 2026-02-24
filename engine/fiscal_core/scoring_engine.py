@@ -13,7 +13,7 @@ class ScoringEngine:
         # Normalize core numeric fields
         self.df['norm_fiscal_risk'] = self._normalize(self.df['fiscal_risk_score'])
         self.df['norm_efficiency'] = self._normalize(self.df['efficiency_proxy'])
-        self.df['indicator_outcome_strength_numeric'] = self.df['indicator_outcome_strength'].replace(
+        self.df['indicator_outcome_strength_numeric'] = self.df['indicator_outcome_strength'].map(
             {
                 'very weak': 0,
                 'weak': 1,
