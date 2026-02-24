@@ -31,8 +31,8 @@ review_agent = ExpenditureReviewAgent(
     env.str("CHATGPT_API_KEY")
     )
 
-print(review_agent.start_review("ministry of health"))
+print(review_agent.start_review("ministry of public works"))
 
-print(review_agent.ask("What are the main efficiency concerns?"))
+print(review_agent.ask("What are they doing about the intermediate savannahs?"))
 print(review_agent.ask("Drill into capex execution risk."))
 print(review_agent.ask("Is this a candidate for budget reduction?"))
