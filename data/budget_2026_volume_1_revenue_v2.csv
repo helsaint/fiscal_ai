@@ -1,0 +1,120 @@
+actual_2024,budget_2025,revised_2025,budget_2026,code,title,header,revenue_type
+34489081000,37523509000,44714428000,53174005000,5011,Import Duties,customs and trade taxes,tax
+221419000,216047000,309083000,306727000,5021,Export Duties,customs and trade taxes,tax
+104803000,96238000,93870000,96714000,5031,Stamp Duties,customs and trade taxes,tax
+638612000,540228000,857429000,839722000,5063,Consumption Tax on Betting Shops,customs and trade taxes,tax
+16979000,16804000,15733000,15932000,5084,Licences on Liquor,customs and trade taxes,tax
+3660659000,3730832000,4019674000,4120024000,5072,Environmental Levy,customs and trade taxes,tax
+653867000,395187000,633936000,632612000,5081,Overtime Fees,customs and trade taxes,tax
+190405000,149706000,286658000,205515000,5082,Departmental Fines,customs and trade taxes,tax
+13639000,13547000,24156000,21373000,5083,Warehouse Rent & Charges,customs and trade taxes,tax
+430006000,429639000,477428000,484526000,5079,Miscellaneous Other Taxes,customs and trade taxes,tax
+20919693000,20240467000,30062797000,34956794000,5951,.0Motor Vehicle,excise tax,tax
+3017723000,3019596000,5889092000,3792414000,5952,.0Petroleum Products,excise tax,tax
+1113345000,1075084000,1223380000,1207118000,5953,.0Tobacco,excise tax,tax
+2106770000,1933600000,2820424000,2898846000,5954,.0Alcoholic Beverages,excise tax,tax
+5405825000,5761360000,4837845000,5997645000,5961,.0Alcoholic Beverages,excise tax,tax
+70752409000,72658941000,58741018000,64948287000,5111,.0Personal Income Tax (P.A.Y.E.),income tax,tax
+5981949000,6255455000,6886617000,7242492000,5112,.0Income Tax on Self-Employed,income tax,tax
+1084265000,1098180000,1213794000,1267382000,5113,.0Premium Tax,income tax,tax
+6055000,6315000,5600000,6317000,5115,.0Professional Fees,income tax,tax
+6397025000,6223842000,5394448000,6059906000,5119,.0Other Personal Income Tax,income tax,tax
+3776008000,4108032000,2149700000,2862004000,5123,.0Corporation Tax on Public Sector Companies,income tax,tax
+83668862000,126111289000,103695775000,123649082000,5124,.0Corporation Tax on Private Sector Companies,income tax,tax
+78632318000,37281384000,54915278000,56642063000,5131,.0Withholding Tax,income tax,tax
+920243000,871721000,1769288000,1246501000,5132,.0Capital Gains Tax,income tax,tax
+211798000,226417000,269202000,277777000,5141,.0Property Tax on Public Sector Companies,taxes on property,tax
+6013026000,6348496000,7835094000,8315487000,5142,.0Property Tax on Private Sector Companies,taxes on property,tax
+227779000,94649000,103316000,99087000,5143,.0Estate duty,taxes on property,tax
+2013645000,2114217000,2060806000,1153821000,5144,.0Property Tax on Individuals,taxes on property,tax
+2714814000,2806563000,3343116000,3433244000,5151,.0Travel Voucher Tax,taxes on international travel,tax
+1503599000,1515951000,1691509000,1637055000,5152,.0Travel Tax,taxes on international travel,tax
+1573745000,1695115000,1825439000,1946539000,5171,.0Licences-Motor Vehicles,other inland revenue taxes,tax
+78000,166000,220000,230000,5172,Licences-Other Vehicles,other inland revenue taxes,tax
+18357000,20238000,18651000,19215000,5173,Licences-Trading,other inland revenue taxes,tax
+33294000,32753000,30804000,32017000,5174,Licences-Miscellaneous,other inland revenue taxes,tax
+1403453000,1437830000,1577566000,1686410000,5165,Motor Vehicle & Road Traffic Ordinance,other inland revenue taxes,tax
+80833000,83079000,100638000,105331000,5182,Miscellaneous Fees,other inland revenue taxes,tax
+21246000,27484000,22970000,36656000,5211,Marriage Licences,stamp duties,tax
+2793000,2933000,1922000,1663000,5212,Cheques,stamp duties,tax
+1513000,1612000,851000,855000,5214,Powers of Attorney,stamp duties,tax
+10000,4000,0,0,5216,Deed Poll,stamp duties,tax
+292496000,325197000,117977000,123850000,5217,Revenue Stamps,stamp duties,tax
+0,231000,0,231000,5272,Auction Duty,duties,tax
+29387000,60000000,34300000,38000000,5311,Fishing Licences,agriculture,"fines, fees, etc."
+1916000,2542000,1933000,2000000,5312,Agriculture (Other),agriculture,"fines, fees, etc."
+104498000,140680000,162174000,194054000,5315,Electrical Inspectors,works,"fines, fees, etc."
+8515000,9300000,361000,1000000,5316,"Overseas Examination, Local Expenses",education,"fines, fees, etc."
+917000,830000,651000,930000,5317,Education - (Other),education,"fines, fees, etc."
+24996000,42000000,30323000,45000000,5318,Pharmacy and Poison Board,health,"fines, fees, etc."
+7313000,8500000,7554000,9500000,5319,National Blood Transfusion Service,health,"fines, fees, etc."
+3886000,5920000,2149000,5000000,5322,Other,health,"fines, fees, etc."
+659000,1700000,617000,700000,5324,Sale of Official Publications,parliament,"fines, fees, etc."
+20150000,21868000,48899000,24655000,5325,Audit Fees,office of the auditor general,"fines, fees, etc."
+268767000,260500000,296393000,258500000,5326,"Supreme Court-Fees, Fines, Seizures",supreme court,"fines, fees, etc."
+2555000,1000000,1841000,1000000,5327,Supreme Court-State Costs Recovered,supreme court,"fines, fees, etc."
+341000,1000000,265000,2000000,5328,.0Sale of Law Books,office of the attorney general,"fines, fees, etc."
+1626000,2500000,1403000,2800000,5329,.0Official Receiver-Public Trustee,official receivers,"fines, fees, etc."
+81828000,62483000,40981000,42994000,5333,.0Consular Services,foreign affairs,"fines, fees, etc."
+277000,224000,351000,324000,5334,".0Citizen Registration Fees, etc.",foreign affairs,"fines, fees, etc."
+7705000,5460000,10059000,9452000,5335,.0Registration of Births etc.,foreign affairs,"fines, fees, etc."
+2491000,3353000,1827000,2011000,5336,.0Foreign Affairs-Other,foreign affairs,"fines, fees, etc."
+1893000,2447000,1683000,1829000,5337,.0Foreign Affairs-Affidavit Fee,foreign affairs,"fines, fees, etc."
+1174695000,1068398000,1427687000,1282167000,5338,.0Police,ministry of home affairs,"fines, fees, etc."
+375000,536000,434000,538000,5340,.0Fire Protection,ministry of home affairs,"fines, fees, etc."
+688567000,741000000,880466000,985000000,5341,.0Citizen Registration Fee etc,ministry of home affairs,"fines, fees, etc."
+65737000,53550000,81587000,91589000,5342,".0Registration of Births, etc.",ministry of home affairs,"fines, fees, etc."
+0,2000,0,2000,5343,.0Registration of Premises,ministry of home affairs,"fines, fees, etc."
+864000,1139000,960000,2604000,5419,.0Other Loans & Advances,interest,non-tax
+36735000,37050000,33975000,36170000,5461,.0Fees,"rents, royalties, etc.",non-tax
+6402135000,6722242000,8549057000,8042786000,5463,.0Royalties,"rents, royalties, etc.",non-tax
+3128000,1090000,4325000,1100000,5465,.0Rental of Government Lands,"rents, royalties, etc.",non-tax
+6564000,7049000,7700000,7125000,5466,.0Housing,"rents, royalties, etc.",non-tax
+1650000,3500000,1114000,3500000,5467,.0Works,"rents, royalties, etc.",non-tax
+0,500000000,0,500000000,5561,.0Dividends from Non-Financial Public Enterprises,dividends and transfers,non-tax
+4293467000,5000000000,7431548000,7803125000,5564,.0Bank of Guyana Profits,dividends and transfers,non-tax
+0,2000000000,0,2000000000,5565,.0Special Trans from Statutory & Non Statutory Bodies,dividends and transfers,non-tax
+329854298000,512436702000,512251661000,495048807000,5581,.0Natural Resource Fund Withdrawal,natural resources fund,non-tax
+13036293000,41121959000,14013978000,49650632000,5591,.0Carbon Credit Inflows,carbon credit inflows,non-tax
+0,0,0,1000,5613,.0Timehri-Miscellaneous Revenue,miscellaneous receipts,non-tax
+0,1500000,0,0,5614,.0Prisons,miscellaneous receipts,non-tax
+3806205000,2774177000,4468997000,5894637000,5616,.0Sundries,miscellaneous receipts,non-tax
+0,140000,0,140000,5618,.0Sale of Empty Drums,miscellaneous receipts,non-tax
+31680000,28229000,36927000,40129000,5619,Pensions Contribution of Legislators,miscellaneous receipts,non-tax
+300000000,315000000,150000000,350000000,5621,Lottery Receipts,miscellaneous receipts,non-tax
+4008709000,16280000000,7927286000,7787799000,5622,Guyana R.E.D.D. Investment Fund,miscellaneous receipts,non-tax
+243888000,253638000,224059000,150865000,5623,Licences Miscellaneous -Other,miscellaneous receipts,non-tax
+1897000,1992000,7776000,2092000,5624,Closure of  Bank Accounts,miscellaneous receipts,non-tax
+27067000,28000000,71050000,75000000,5715,Sales of Assets,miscellaneous capital revenue,non-tax
+41906000,0,0,0,5750,Germany - Guyana Protected Areas System,project grants,foreign grants
+1436956000,4810000000,7826056000,720000000,5763,CDB,project grants,foreign grants
+300090000,155000000,155000000,170000000,5765,Global Fund,project grants,foreign grants
+150548000,606750000,419149000,630000000,5766,IDB,project grants,foreign grants
+794007000,309490000,99440000,1023600000,5772,IDA/WORLD BANK,project grants,foreign grants
+0,0,0,750000000,5775,China,project grants,foreign grants
+0,46100000,15987000,0,5777,IFAD,project grants,foreign grants
+42902000,207290000,128633000,77330000,5779,Kuwait,project grants,foreign grants
+0,633734000,664618000,0,5769,Canada Project Grant,cash and commodity assistance grant,foreign grants
+105603000,913320000,498873000,506444000,5782,EU,cash and commodity assistance grant,foreign grants
+7175485000,12900000000,1807806000,15825000000,5811,CDB,project loans,foreign loans
+26000000000,31807000000,23521073000,4549500000,5812,China,project loans,foreign loans
+3540694000,3655000000,2270656000,10020000000,5813,IDA,project loans,foreign loans
+8842250000,15012520000,8530053000,23120000000,5814,IDB,project loans,foreign loans
+400000000,3942000,3597000,0,5815,IFAD,project loans,foreign loans
+9221721000,15268695000,1415000000,9190825000,5818,India,project loans,foreign loans
+0,150000000,0,900000000,5821,CDF,project loans,foreign loans
+8107489000,9148500000,8849876000,13000000000,5822,Islamic Development Bank,project loans,foreign loans
+4494072000,15000000000,8782991000,13150000000,5824,United Kingdom Project Loan,project loans,foreign loans
+0,39109855000,0,8101268000,5825,USA Project Loan,project loans,foreign loans
+0,7500000000,207936000,7500000000,5826,Saudi Arabia Project Loan,project loans,foreign loans
+5147552000,17000000000,0,14950000000,5828,Sweden Project Loan,project loans,foreign loans
+0,0,0,3150000000,5829,JICA Project Loan,project loans,foreign loans
+16815268000,22413000000,3821607000,40935885000,5861,Other,project loans,foreign loans
+0,62550000000,72975000000,41700000000,5851,IDB,project loans,foreign loans
+0,0,0,7422600000,5852,IDA,project loans,foreign loans
+18436078000,0,0,0,5854,Canada,project loans,foreign loans
+0,70926479000,0,98025233000,5855,USA,project loans,foreign loans
+0,0,26062500000,11321009000,5856,CDB,project loans,foreign loans
+0,0,0,4281745000,5857,Other,project loans,foreign loans
+30752215000,33723248000,38831361000,4562270000,5910,non-excise tax imports,value-added tax,tax
+49431722000,54264625000,46513934000,49083758000,5020,non-excise tax domestic supplies,value-added tax,tax

@@ -1,0 +1,35 @@
+fiscal_ai/
+│
+├── data/
+│   ├── revenue.csv
+│   ├── opex.csv
+│   ├── capex.csv
+│   ├── indicators.csv
+│   └── ministry_fiscal_summary.csv
+│
+├── engine/
+│   ├── fiscal_tools.py   ← we build this first
+│   └── loader.py
+│   └──fiscal_core/
+│       ├── fiscal_engine.py
+│       ├── efficiency_engine.py
+│       ├── risk_engine.py
+│       ├── scoring_engine.py
+│       ├── benchmark_engine.py
+│       ├── briefing_engine.py
+│       └── unified_truth_engine.py
+│
+├── agents/
+│   ├── fiscal_analyst_agent.py
+│   ├── cabinet_briefing_agent.py
+│   └── expenditure_review_agent.py
+│
+├── app/
+│   ├── Home.py
+│   ├── pages/
+│       ├── 1_Fiscal_Dashboard.py
+│       ├── 2_Ministry_Review.py
+│       ├── 3_Cabinet_Briefing.py
+│       ├── 4_System_Insights.py
+│
+└── main.py (agent later)
