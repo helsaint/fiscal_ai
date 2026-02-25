@@ -1,174 +1,84 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
+from app.utils.load_csv import load_csv
 import plotly.graph_objects as go
 from app.ui.graph_objects_config import RISK_COLORS
+import hashlib
+from app.ui.format_helpers import *
+from app.utils.ui import local_css
+
+# Used to generate a unique hash for caching purposes based on the dataframe content
+def get_hash(df):
+    # Create a unique MD5 hash based on the dataframe content
+    return hashlib.md5(pd.util.hash_pandas_object(df).values).hexdigest()
+
+# --------------------------------------------------
+# Load Main Dataset
+# --------------------------------------------------
+
+df_mfi = load_csv("master_ministry_fiscal_intelligence.csv")
+
+# --------------------------------------------------
+# Load CSS
+# --------------------------------------------------
+
+local_css("style.css")
+
+# --------------------------------------------------
+# Header
+# --------------------------------------------------
 
 st.set_page_config(
     page_title="Fiscal Dashboard",
     layout="wide"
 )
 
-# --------------------------------------------------
-# Header
-# --------------------------------------------------
-
 st.title("Fiscal Intelligence Dashboard")
 st.markdown("Executive overview of fiscal exposure and ministry risk positioning.")
 st.divider()
 
 # --------------------------------------------------
-# Dummy Data (Temporary)
+# Compute executive summary metrics
 # --------------------------------------------------
 
-data = {
-    "Ministry": [
-        "Health",
-        "Transport",
-        "Education",
-        "Public Works",
-        "Energy",
-        "Defense"
-    ],
-    "Total Spend (2026)": [120, 95, 110, 75, 130, 160],
-    "Risk Level": ["High", "Moderate", "Low", "Moderate", "High", "Low"],
-    "Efficiency Score": [52, 68, 81, 63, 49, 77]
-}
+total_spend_2026 = df_mfi["total_spend_2026"].sum()
 
-df = pd.DataFrame(data)
+weighted_risk_score = (
+    (df_mfi["fiscal_risk_score"] * df_mfi["total_spend_2026"]).sum()
+    / df_mfi["total_spend_2026"].sum()
+)
 
-# --------------------------------------------------
-# Key Indicators (Top Row)
-# --------------------------------------------------
+budget_pressure_pct = (
+    df_mfi["budget_pressure_flag"].sum() / len(df_mfi)
+) * 100
+
+high_performer_pct = (
+    df_mfi["high_performer_flag"].sum() / len(df_mfi)
+) * 100
 
 # --------------------------------------------------
-# Executive Summary Cards
+# Fiscal Overview Cards
 # --------------------------------------------------
 
-st.subheader("Executive Summary")
-
-total_exposure = df["Total Spend (2026)"].sum()
-high_risk_count = (df["Risk Level"] == "High").sum()
-avg_eff = round(df["Efficiency Score"].mean(), 1)
-total_ministries = len(df)
+st.markdown("## National Fiscal Overview – FY2026")
 
 col1, col2, col3, col4 = st.columns(4)
 
-def summary_card(title, value):
-    with st.container(border=True):
-        st.markdown(f"**{title.upper()}**")
-        st.markdown(f"<h2 style='margin-top: 0;'>{value}</h2>", unsafe_allow_html=True)
-
 with col1:
-    summary_card("Total Fiscal Exposure", f"{total_exposure} B")
+    #st.metric("Total Spend (2026)", format_currency(total_spend_2026))
+    total_spend_2026_formatted = format_currency(total_spend_2026)
+    st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-label">Total Spend (2026)</div>
+            <div class="metric-value">{total_spend_2026_formatted}</div>
+        </div>
+    """, unsafe_allow_html=True)
 
 with col2:
-    summary_card("High-Risk Ministries", high_risk_count)
+    st.metric("Weighted Risk Score", f"{weighted_risk_score:.2f}")
 
 with col3:
-    summary_card("Average Efficiency Index", avg_eff)
+    st.metric("Budget Pressure (%)", f"{budget_pressure_pct:.1f}%")
 
 with col4:
-    summary_card("Total Ministries", total_ministries)
-
-# --------------------------------------------------
-# Ministry Summary Table
-# --------------------------------------------------
-
-st.subheader("Ministry Risk Overview")
-
-st.dataframe(
-    df,
-    width='stretch',
-    hide_index=True
-)
-
-st.divider()
-
-# --------------------------------------------------
-# Risk Distribution (Controlled)
-# --------------------------------------------------
-
-st.subheader("Risk Distribution")
-
-risk_counts = df["Risk Level"].value_counts()
-
-fig_risk = go.Figure()
-
-for risk_level in ["High", "Moderate", "Low"]:
-    if risk_level in risk_counts.index:
-        fig_risk.add_trace(
-            go.Bar(
-                x=[risk_level],
-                y=[risk_counts[risk_level]],
-                name=risk_level,
-                marker=dict(color=RISK_COLORS[risk_level]),
-                hovertemplate=(
-                    "<b>%{x}</b><br>"
-                    "Ministries: %{y}<extra></extra>"
-                )
-            )
-        )
-
-fig_risk.update_layout(
-    showlegend=False,
-    xaxis_title="Risk Classification",
-    yaxis_title="Number of Ministries",
-    plot_bgcolor="white",
-    paper_bgcolor="white",
-    margin=dict(l=40, r=20, t=40, b=40),
-    font=dict(size=14)
-)
-
-fig_risk.update_xaxes(showgrid=False)
-fig_risk.update_yaxes(showgrid=True, gridcolor="rgba(0,0,0,0.08)")
-
-st.plotly_chart(fig_risk, uwidth='stretch')
-
-# --------------------------------------------------
-# Efficiency Relative to Fiscal Exposure
-# --------------------------------------------------
-
-st.subheader("Efficiency Relative to Fiscal Exposure")
-
-fig_scatter = go.Figure()
-
-for risk_level in ["High", "Moderate", "Low"]:
-    subset = df[df["Risk Level"] == risk_level]
-
-    fig_scatter.add_trace(
-        go.Scatter(
-            x=subset["Total Spend (2026)"],
-            y=subset["Efficiency Score"],
-            mode="markers",
-            name=risk_level,
-            marker=dict(
-                size=12,
-                color=RISK_COLORS[risk_level],
-                line=dict(width=0.5, color="black")
-            ),
-            text=subset["Ministry"],
-            hovertemplate=(
-                "<b>%{text}</b><br>"
-                "Spend: %{x} B<br>"
-                "Efficiency: %{y}<br>"
-                "Risk: " + risk_level +
-                "<extra></extra>"
-            )
-        )
-    )
-
-fig_scatter.update_layout(
-    xaxis_title="Total Spend (2026)",
-    yaxis_title="Efficiency Score",
-    plot_bgcolor="white",
-    paper_bgcolor="white",
-    margin=dict(l=40, r=20, t=40, b=40),
-    legend_title="Risk Level",
-    font=dict(size=14)
-)
-
-fig_scatter.update_xaxes(showgrid=True, gridcolor="rgba(0,0,0,0.08)")
-fig_scatter.update_yaxes(showgrid=True, gridcolor="rgba(0,0,0,0.08)")
-
-st.plotly_chart(fig_scatter, width='stretch')
+    st.metric("High Performer (%)", f"{high_performer_pct:.1f}%")

@@ -1,0 +1,63 @@
+/* Container for the metric card */
+.metric-card {
+    background-color: #1E1E2E;   /* Deep dark background */
+    border: 1px solid #313244;   /* Subtle border */
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    
+    /* Desktop: Fixed height ensures all 4 cards in the row match perfectly */
+    height: 140px; 
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;           /* Ensure it fills the Streamlit column */
+    overflow: hidden;      /* Prevent any weird spillover */
+    
+    /* Smooth hover effect */
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover state for a "tech" feel */
+.metric-card:hover {
+    border-color: #00FF41;       /* HTB Green border on hover */
+    transform: translateY(-3px);  /* Slight lift */
+}
+
+/* The Label (e.g., "Total Spend") */
+.metric-label {
+    color: #a6adc8;              /* Muted blue-grey */
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 8px;
+}
+
+/* The Value (e.g., "$1,200") */
+.metric-value {
+    color: #ffffff;
+    font-size: 1.8rem;
+    font-weight: 800;
+    font-family: 'Source Code Pro', monospace; /* Monospace looks great for HTB */
+}
+
+/* Responsive adjustments for Mobile */
+@media (max-width: 768px) {
+    .metric-card {
+        /* On mobile, st.columns(4) stacks vertically. 
+           We adjust height to auto so it feels more natural. */
+        height: auto;
+        min-height: 110px;
+        margin-bottom: 12px;     /* Gap between stacked cards */
+        padding: 15px;
+    }
+    
+    .metric-value {
+        font-size: 1.5rem;       /* Slightly smaller text for narrow screens */
+    }
+}
