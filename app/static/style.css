@@ -15,7 +15,7 @@
     align-items: center;
 
     width: 100%;           /* Ensure it fills the Streamlit column */
-    overflow: hidden;      /* Prevent any weird spillover */
+    overflow: visible;     /* Allow for tool tips */
     
     /* Smooth hover effect */
     transition: transform 0.2s ease, border-color 0.2s ease;
@@ -26,6 +26,46 @@
 .metric-card:hover {
     border-color: #00FF41;       /* HTB Green border on hover */
     transform: translateY(-3px);  /* Slight lift */
+}
+
+/* --- TOOLTIP ENGINE --- */
+
+.metric-card .tooltip-text {
+    visibility: hidden;
+    width: 160px;
+    background-color: #313244; /* Match your border color */
+    color: #00FF41;            /* HTB Green text */
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 10;               /* Ensure it stays on top */
+    bottom: 110%;              /* Position above the card */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.75rem;
+    border: 1px solid #00FF41;
+    pointer-events: none;      /* Prevents tooltip from flickering */
+}
+
+/* Show tooltip on hover */
+.metric-card:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Tooltip Arrow */
+.metric-card .tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #00FF41 transparent transparent transparent;
 }
 
 /* The Label (e.g., "Total Spend") */
