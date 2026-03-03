@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from app.utils.load_csv import load_csv
 import plotly.graph_objects as go
-from app.ui.graph_objects_config import RISK_COLORS
+from app.ui.graph_objects_config import *
 import hashlib
 from app.ui.format_helpers import *
 from app.ui.fiscal_dashboard_tooltip import *
@@ -139,8 +139,6 @@ extra_metadata = [
      )]
 ]
 
-print(extra_metadata[0:2:1])
-
 fig_exp_comp = go.Figure(data=[go.Pie(
     labels=[
         "Operational Expenditure",
@@ -232,8 +230,6 @@ extra_metadata= [
      format_currency(foreign_capex_2026)]
 ]
 
-print(extra_metadata[0:2:1])
-
 # --- Stacked Bars ---
 fig_trend.add_trace(go.Bar(
     name="Operational Expenditure",
@@ -317,3 +313,250 @@ st.caption(
     f"to {capex_ratio_2025:.1f}% (2025), "
     f"with the FY2026 budget projecting {capex_ratio_2026:.1f}%."
 )
+
+st.divider()
+
+# --------------------------------------------------
+# Risk Distribution
+# --------------------------------------------------
+
+list_fiscal_risks = ["strong", "stable", "watch"]
+risk_counts = (
+    df_mfi["fiscal_risk_label"]
+    .value_counts()
+    .reindex(list_fiscal_risks)
+)
+
+df_temp = df_mfi.groupby("fiscal_risk_label").agg({
+    'ministry': 'count',
+    'total_spend_2026': 'sum',
+}).reindex(list_fiscal_risks).reset_index()
+
+
+extra_metadata = [
+    [df_mfi.loc[df_mfi.loc[
+        df_mfi['fiscal_risk_label'] == x,
+        'total_spend_2026'
+        ].idxmax(),
+        'ministry'] for x in list_fiscal_risks],
+    [format_currency(df_mfi.loc[df_mfi.loc[
+        df_mfi['fiscal_risk_label'] == x,
+        'total_spend_2026'
+        ].idxmax(),
+        'total_spend_2026']) for x in list_fiscal_risks],
+    [format_currency(x) for x in list(df_temp['total_spend_2026'])],
+]
+
+extra_metadata = [list(row) for row in zip(*extra_metadata)]
+
+fig_risk_dist = go.Figure()
+
+fig_risk_dist.add_trace(go.Bar(
+    x=risk_counts.index,
+    y=risk_counts.values,
+    marker_color=["#486581", "#829ab1", "#102a43"],
+    customdata=extra_metadata,
+    hovertemplate=(
+        "<b>Biggest Agency: </b>%{customdata[0]}<br>"+
+        "<b>Agency Budget: </b>%{customdata[1]}<br>"+
+        "<b>2026 Budget: </b>%{customdata[2]}<br>"
+    )
+))
+
+fig_risk_dist.update_layout(
+    title="Fiscal Risk Classification Distribution",
+    height=400,
+    margin=dict(l=20, r=20, t=60, b=40),
+    xaxis_title="Risk Classification",
+    yaxis_title="Number of Ministries"
+)
+
+st.plotly_chart(fig_risk_dist, width='stretch', key='risk_dist_chart')
+
+# --------------------------------------------------
+# Risk Concentration
+# --------------------------------------------------
+
+df_mfi["risk_exposure"] = df_mfi["fiscal_risk_score"]/100 * df_mfi["total_spend_2026"]
+
+top_risk = (
+    df_mfi.sort_values("risk_exposure", ascending=False)
+    .head(10)
+).sort_values(by='risk_exposure', ascending=False)
+
+extra_metadata = [
+    [format_currency(x) for x in top_risk['total_spend_2026']],
+    [format_currency(x) for x in top_risk['risk_exposure']],
+]
+
+extra_metadata = [list(row) for row in zip(*extra_metadata)]
+
+fig_top_risk = go.Figure()
+
+fig_top_risk.add_trace(go.Bar(
+    y=top_risk["ministry"],
+    x=top_risk["risk_exposure"],
+    orientation="h",
+    marker_color="#102a43",
+    customdata=extra_metadata,
+    hovertemplate=(
+        "<b>2026 Budget: </b> %{customdata[0]}<br>" +
+        "<b>Risk-Weighted Fiscal Exposure: </b> %{customdata[1]}<br>"
+    )
+))
+
+fig_top_risk.update_layout(
+    title="Top 10 Ministries by Fiscal Risk Exposure",
+    height=500,
+    margin=dict(l=20, r=20, t=60, b=40),
+    xaxis_title="Risk-Weighted Fiscal Exposure",
+    yaxis_title="Ministry"
+)
+
+st.plotly_chart(fig_top_risk, width='stretch', key='risk_conc_chart')
+
+# --------------------------------------------------
+# Risk Drivers
+# --------------------------------------------------
+
+weighted_efficiency_risk = (
+    (df_mfi["efficiency_risk"] * df_mfi["total_spend_2026"]).sum()
+    / df_mfi["total_spend_2026"].sum()
+)
+
+weighted_capex_risk = (
+    (df_mfi["capex_risk"] * df_mfi["total_spend_2026"]).sum()
+    / df_mfi["total_spend_2026"].sum()
+)
+
+weighted_foreign_risk = (
+    (df_mfi["foreign_risk_num"] * df_mfi["total_spend_2026"]).sum()
+    / df_mfi["total_spend_2026"].sum()
+)
+
+weighted_indicator_risk = (
+    (df_mfi["indicator_risk"] * df_mfi["total_spend_2026"]).sum()
+    / df_mfi["total_spend_2026"].sum()
+)
+
+weighted_outcome_risk = (
+    (df_mfi["outcome_risk"] * df_mfi["total_spend_2026"]).sum()
+    / df_mfi["total_spend_2026"].sum()
+)
+
+fig_drivers = go.Figure()
+
+fig_drivers.add_trace(go.Bar(
+    x=[
+        "Efficiency Risk",
+        "Capex Risk",
+        "Foreign Exposure Risk",
+        "Indicator Risk",
+        "Outcome Risk"
+    ],
+    y=[
+        weighted_efficiency_risk,
+        weighted_capex_risk,
+        weighted_foreign_risk,
+        weighted_indicator_risk,
+        weighted_outcome_risk
+    ],
+    marker_color="#486581"
+))
+
+fig_drivers.update_layout(
+    title="Structural Risk Drivers",
+    height=420,
+    margin=dict(l=20, r=20, t=60, b=40),
+    yaxis_title="Weighted Risk Level"
+)
+
+st.plotly_chart(fig_drivers, width='stretch')
+
+driver_values = {
+    "efficiency_risk": weighted_efficiency_risk,
+    "capex_risk": weighted_capex_risk,
+    "indicator_risk": weighted_indicator_risk,
+    "foreign_risk": weighted_foreign_risk,
+    "outcome_risk": weighted_outcome_risk
+}
+
+st.markdown(generate_driver_narrative(driver_values))
+
+# --------------------------------------------------
+# Fiscal Risk Drivers
+# --------------------------------------------------
+
+weighted_fiscal_risk_score = (
+    (df_mfi["fiscal_risk_score"] / 100 * df_mfi["total_spend_2026"]).sum()
+    / df_mfi["total_spend_2026"].sum()
+)
+
+budget_pressure_pct = (
+    df_mfi.loc[df_mfi["budget_pressure_flag"] == 1, "total_spend_2026"].sum()
+    / df_mfi["total_spend_2026"].sum()
+)
+
+weighted_outcome_risk = (
+    (df_mfi["outcome_risk"] * df_mfi["total_spend_2026"]).sum()
+    / df_mfi["total_spend_2026"].sum()
+)
+
+metrics = {
+    "Fiscal Risk": weighted_fiscal_risk_score,
+    "Outcome Risk": weighted_outcome_risk,
+    "Budget Pressure": budget_pressure_pct
+}
+
+fig = go.Figure()
+
+for i, (label, value) in enumerate(metrics.items()):
+    band_label, color = fiscal_classify_band(value)
+
+    # Background full-scale bar (0–1)
+    fig.add_trace(go.Bar(
+        x=[1],
+        y=[label],
+        orientation='h',
+        marker_color="#486581",
+        showlegend=False,
+        hoverinfo="skip"
+    ))
+
+    # Actual value overlay
+    fig.add_trace(go.Bar(
+        x=[value],
+        y=[label],
+        orientation='h',
+        marker=dict(color=color),
+        name=band_label,
+        text=[f"{value:.2f}"],
+        textposition="inside",
+        insidetextanchor="middle"
+    ))
+
+fig.update_layout(
+    title="Spend-Weighted Risk Drivers",
+    barmode='overlay',
+    height=260,
+    margin=dict(l=40, r=40, t=20, b=20),
+    xaxis=dict(
+        range=[0, 1],
+        showgrid=False,
+        zeroline=False,
+        tickvals=[0, 0.4, 0.6, 0.75, 1],
+        ticktext=["0", "0.40", "0.60", "0.75", "1.0"],
+        title=""
+    ),
+    yaxis=dict(
+        showgrid=False,
+        title=""
+    ),
+)
+
+st.plotly_chart(fig, width='stretch')
+st.write(generate_graph_description(
+    weighted_fiscal_risk_score,
+    weighted_outcome_risk,
+    budget_pressure_pct
+))
