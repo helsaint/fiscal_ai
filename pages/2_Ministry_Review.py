@@ -25,6 +25,8 @@ if 'review_output' not in st.session_state:
     st.session_state.review_output = None
 if 'cabinet_briefing_output' not in st.session_state:
     st.session_state.cabinet_briefing_output = None
+if 'df' not in st.session_state:
+    st.session_state.df = None
 
 # --------------------------------------------------
 # INSTITUTIONAL HEADER
@@ -51,6 +53,7 @@ st.markdown("")
 df_summary = load_csv("master_ministry_fiscal_intelligence.csv")
 df_summary_hash = get_file_hash("master_ministry_fiscal_intelligence.csv")
 ministries = sorted(df_summary["ministry"].unique())
+st.session_state.df = df_summary.copy()
 
 selected_ministry = st.selectbox(
     "Select Ministry",
@@ -69,7 +72,6 @@ profile = build_ministry_profile(df_summary, selected_ministry)
 framing = generate_executive_headline(profile)
 
 test_benchmark_engine = BenchmarkEngine(df_summary)
-print(test_benchmark_engine.spend_outliers())
 # --------------------------------------------------
 # EXECUTIVE INTELLIGENCE PANEL
 # --------------------------------------------------
@@ -357,11 +359,14 @@ st.plotly_chart(fig, width='stretch')
 st.divider()
 
 
-if st.button("Generate Fiscal Analysis"):
+if (st.button("Generate Fiscal Analysis")
+    and 
+    st.session_state.fiscal_analysis_output == None):
 
     row = df_summary[df_summary["ministry"] == selected_ministry].iloc[0]
 
-    fiscal_analysis = generate_fiscal_analysis(df_summary_hash, row, signals)
+    fiscal_analysis = generate_fiscal_analysis(st.session_state.df,
+        df_summary_hash, row, signals)
     st.session_state.fiscal_analysis_output = fiscal_analysis
     
 if st.session_state.fiscal_analysis_output:
