@@ -18,5 +18,8 @@ def format_currency(value):
 def format_percent(value):
     return f"{value:.2f}%"
 
+def format_percent_round(value):
+    return f"{value:.0f}%"
+
 def format_score(value):
     return f"{value:.2f}"

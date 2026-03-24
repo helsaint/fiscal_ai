@@ -1,5 +1,8 @@
 fiscal_ai/
 │
+├── .streamlit/
+│   └── config.toml
+│
 ├── data/
 │   ├── revenue.csv
 │   ├── opex.csv
@@ -33,3 +36,12 @@ fiscal_ai/
 │       ├── 4_System_Insights.py
 │
 └── main.py (agent later)
+
+2_Ministry_Review
+    ├──Header + Ministry Selector
+    ├──Executive Headline
+    ├──3–5 Priority Signals
+    ├──Structured Fiscal Profile
+    ├──Relative Benchmark Position
+    ├──Efficiency Diagnostics
+    ├──Flagged Intervention Areas

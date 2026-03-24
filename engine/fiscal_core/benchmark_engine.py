@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 
+# CURRENTLY NOT BEING USED
 
 class BenchmarkEngine:
     def __init__(self, master_df: pd.DataFrame):
@@ -16,10 +17,9 @@ class BenchmarkEngine:
         self.df['risk_percentile'] = self.df['fiscal_risk_score'].rank(pct=True)
         self.df['capex_intensity_percentile'] = self.df['capex_ratio_budget_2026'].rank(pct=True)
 
-    # ---------------------------------------------------
-    # 1. Benchmark by Agency Type
-    # ---------------------------------------------------
-
+    # Filter agency by type [ministry, constitutional, military, local governement, nan(debt)]
+    # Rank according to risk_percentile
+    
     def peer_benchmark(self, agency_type_value):
         df = self.df[self.df['agency_type'] == agency_type_value]
 
@@ -31,9 +31,7 @@ class BenchmarkEngine:
             by='risk_percentile', ascending=False
         )
 
-    # ---------------------------------------------------
-    # 2. Spend Outliers (Top 10%)
-    # ---------------------------------------------------
+    # List top 10% of agencies by spend
 
     def spend_outliers(self):
         df = self.df[self.df['spend_percentile'] >= 0.90]
@@ -45,9 +43,7 @@ class BenchmarkEngine:
             by='total_spend_2026', ascending=False
         )
 
-    # ---------------------------------------------------
-    # 3. Efficiency Outliers (Bottom 10%)
-    # ---------------------------------------------------
+    # List bottom 10% of agencies by efficiency_percentile
 
     def low_efficiency_outliers(self):
         df = self.df[self.df['efficiency_percentile'] <= 0.10]

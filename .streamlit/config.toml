@@ -1,0 +1,10 @@
+[theme]
+
+base="dark"
+
+primaryColor="#3A7CA5"                 # restrained executive blue
+backgroundColor="#0B0F14"              # deep slate (almost charcoal)
+secondaryBackgroundColor="#121821"     # panel layer
+textColor="#E8EDF2"
+
+font="sans serif"
