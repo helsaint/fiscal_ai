@@ -372,11 +372,18 @@ if (st.button("Generate Fiscal Analysis")
 if st.session_state.fiscal_analysis_output:
     st.markdown("### Fiscal Interpretation")
     st.write(st.session_state.fiscal_analysis_output["analysis"])
+
+    st.markdown("### Fiscal Opportunit")
+    st.write(st.session_state.fiscal_analysis_output["fiscal_opportunity"])
+
     st.markdown("### Key Risk Driver")
     st.write(st.session_state.fiscal_analysis_output["key_risk_driver"])
 
     st.markdown("### Oversight Priority")
     st.write(st.session_state.fiscal_analysis_output["oversight_priority"])
+
+    st.markdown("### Compatative Position")
+    st.write(st.session_state.fiscal_analysis_output["comparative_position"])
 
     st.markdown("### Recommended Action")
     st.write(st.session_state.fiscal_analysis_output["recommended_action"])

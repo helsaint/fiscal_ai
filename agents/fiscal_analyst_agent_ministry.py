@@ -5,6 +5,7 @@ import json
 from agents.agents_config import FISCAL_ANALYSIS_SCHEMA
 from app.utils.database_cache import check_cache, save_to_cache
 from engine.fiscal_core.ministry_review.ministry_comparative_review import build_comparative_insight
+from engine.fiscal_core.ministry_review.ministry_opportunity_engine import build_opportunity_statement, estimate_savings_proxy
 import inspect
 
 env = Env()
@@ -56,7 +57,8 @@ def format_priority_signals(signals):
 # We will use American terms like "Treasury deperatment"
 # because most LLMs are probably trained on American data
 
-def build_prompt(context, signals_text, comparative_text):
+def build_prompt(context, signals_text, comparative_text,
+                 opportunity_text):
 
     prompt = f"""
 You are a senior fiscal policy analyst working in a national Treasury department.
@@ -100,6 +102,10 @@ Comparative Position
 --------------------
 {comparative_text}
 
+Fiscal Opportunity
+-----------------
+{opportunity_text}
+
 Task
 ----
 Return a structured fiscal assessment.
@@ -112,6 +118,8 @@ Return ONLY valid JSON with the following fields:
   "analysis": "4–6 sentence fiscal interpretation",
   "key_risk_driver": "single most material fiscal risk driver",
   "oversight_priority": "primary area requiring oversight",
+  "comparative_position": "how does the ministry compare to others",
+  "fiscal_opportunity": "available fiscal opportunities to improve efficiencies",
   "recommended_action": "clear, actionable recommendation"
 }}
 
@@ -152,7 +160,10 @@ def generate_fiscal_analysis(df, data_hash, row, signals, model="gpt-4o"):
     context = build_ministry_context(row)
     signals_text = format_priority_signals(signals)
     comparative_text = build_comparative_insight(df, row)
-    prompt = build_prompt(context, signals_text, comparative_text)
+    opportunity_text = build_opportunity_statement(df, row)
+    savings = estimate_savings_proxy(df, row)
+    prompt = build_prompt(context, signals_text, comparative_text,
+                          opportunity_text)
 
     response = client.chat.completions.create(
     model="gpt-4o",
