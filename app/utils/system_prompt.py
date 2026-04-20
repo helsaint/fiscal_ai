@@ -1,4 +1,4 @@
-from app.utils.fiscal_logic import MASTER_MINISTRY_FISCAL_INTELLIGENCE_DICTIONARY as data_dictionary
+from app.utils.dictionary_column_names import MASTER_MINISTRY_FISCAL_INTELLIGENCE_DICTIONARY as data_dictionary
 
 system_prompt = f"""
 You are a fiscal analyst of government budgets that answers questions about a government budget dataset.

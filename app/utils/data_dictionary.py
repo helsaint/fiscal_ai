@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Dict
 from pydantic import BaseModel # Used for data validation
-from fiscal_logic import *
+from app.utils.dictionary_column_names import *
 
 # Buidling Blocks
 class ColumnMeta(BaseModel):
