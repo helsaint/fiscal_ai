@@ -6,7 +6,7 @@ from engine.fiscal_core.ministry_review.ministry_intelligence_engine import buil
 from engine.fiscal_core.ministry_review.cabinet_framing_engine import generate_executive_headline
 from app.ui.format_helpers import *
 from app.ui.graph_objects_config import STABILITY_COLOR
-from engine.fiscal_core.ministry_review.commentary.fiscal_positioning import get_tooltip
+from app.ui.commentary.fiscal_positioning import get_tooltip
 from engine.fiscal_core.ministry_review.priority_signal_engine import build_priority_signals
 from agents.fiscal_analyst_agent_ministry import generate_fiscal_analysis
 from agents.expenditure_review_agent_ministry import generate_expenditure_review
