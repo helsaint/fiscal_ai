@@ -24,7 +24,7 @@ DATA_DICTIONARY: Dict[str, TableMeta] = {
     "fiscal_summary":TableMeta(
         description=(
             """Ministry/Government Agency level summary for fiscal intelligence dataset.
-            It contains summed financial allocations for capex and opex, funding source either
+            It contains summed financial allocations for 'capex' and 'opex', funding source either
             government (local) or foreign. It also includes performance metrics. Counts number of
             programs and outcome and output indicators. It also includes indicator outcome ratios
             and indicator output ratios. It also contains proxies for efficiency and risks flags.
@@ -32,7 +32,8 @@ DATA_DICTIONARY: Dict[str, TableMeta] = {
         ),
         grain = "One row per government ministry/agency",
         primary_keys=["ministry"],
-        join_hints=["joins to opex and capex on ministry"],
+        join_hints=["joins to 'opex' and 'capex' on 'ministry' but first always aggregate the 'opex' and 'capex' tables on the 'ministry' and then join",
+                    "NEVER join 'opex' directly to 'fiscal_summary' without reducing the grain to 'ministry'" ],
         columns={
             "ministry": ColumnMeta(
                 description=MASTER_MINISTRY_FISCAL_INTELLIGENCE_DICTIONARY["ministry"],
@@ -297,15 +298,17 @@ DATA_DICTIONARY: Dict[str, TableMeta] = {
     # opex
     "opex": TableMeta(
         description=(
-            """ Provides opex spend for each ministry by the account code. It includes spend
+            """ Provides 'opex' spend for each ministry by the account code. It includes spend
             from the past two years as well as the current budgeted spend. It contains allocation 
-            for opex for each ministry by each programme within that ministry. It includes 
+            for 'opex' for each ministry by each programme within that ministry. It includes 
             funding source either government or foreign funded. Other information included description 
             of expenditures.
             """),
         grain="one row represents expenditure by ministry/agency and the account code",
         primary_keys=["ministry", "account_code"],
-        join_hints=["joins to capex on ministry and programme", "join to fiscal_summary on ministry but will have to first aggregate on the ministry"],
+        join_hints=["join 'capex' and opex on 'ministry' and 'programme' but first you will have to aggregate on 'programme' and 'ministry' for both the opex and capex tables", 
+                    "join to 'opex' to fiscal_summary on 'ministry' but you will have to first aggregate the 'opex' table on 'ministry'",
+                    "NEVER join 'opex' directly to 'fiscal_summary' without reducing the grain to 'ministry'"],
         columns={
             "description": ColumnMeta(
                 description=OPEX_DICTIONARY["description"],
@@ -413,16 +416,18 @@ DATA_DICTIONARY: Dict[str, TableMeta] = {
     "capex": TableMeta(
         description=(
             """
-            Provides opex spend for each ministry by the programme and project name (title). 
+            Provides 'opex' spend for each ministry by the programme and project name (title). 
             It includes spend from the past two years as well as the current budgeted spend. 
-            It contains allocation for capex for each ministry by each programme and the project
+            It contains allocation for 'capex' for each ministry by each programme and the project
             title. It includes funding source either government or foreign funded. Other information 
             included description of the project.
             """
         ),
         grain="One row describes the budget and current costs of project for each programme within each ministry",
         primary_keys=["programme", "ministry", "title"],
-        join_hints=["join opex on ministry and programme but will have to aggregate on these two fields first", "join fiscal_summary on ministry but will first have to aggregate on ministry"],
+        join_hints=["join 'capex' and 'opex' on 'ministry' and 'programme' but first you will have to aggregate on 'programme' and 'ministry' for both the opex and capex tables", 
+                    "join 'capex' on fiscal_summary on ministry but first you will have to aggregate on ministry for the capex table then perform the join on fiscal_summary on 'ministry'",
+                    "NEVER join 'opex' directly to 'fiscal_summary' without reducing the grain to 'ministry'"],
         columns={
             "programme": ColumnMeta(
                 description=CAPEX_DICTIONARY["programme"],
@@ -519,4 +524,28 @@ DATA_DICTIONARY: Dict[str, TableMeta] = {
         }
     )
 }
+
+def dict_as_text(table: str | None = None) -> str:
+    # Returns a compact, LLM Friendly string of the data dictionary
+    tables = (
+        {table: DATA_DICTIONARY[table]}
+        if table and table in DATA_DICTIONARY
+        else DATA_DICTIONARY
+    )
+    lines: list[str] = []
+    for tname, tmeta in tables.items():
+        lines.append(f"TABLE: {tname}")
+        lines.append(f"  Description : {tmeta.description}")
+        lines.append(f"  Grain       : {tmeta.grain}")
+        if tmeta.join_hints:
+            lines.append(f"  Joins       : {'; '.join(tmeta.join_hints)}")
+        lines.append("  Columns:")
+        for col, meta in tmeta.columns.items():
+            synth = " [synthesized]" if meta.is_synthesized else ""
+            unit = f" ({meta.unit})" if meta.unit else ""
+            lines.append(f"    {col}{unit}{synth}: {meta.description}")
+            if meta.is_synthesized:
+                lines.append(f"      formula: {meta.formula}")
+        lines.append("")
+    return "\n".join(lines)
 
