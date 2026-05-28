@@ -416,7 +416,7 @@ DATA_DICTIONARY: Dict[str, TableMeta] = {
     "capex": TableMeta(
         description=(
             """
-            Provides 'opex' spend for each ministry by the programme and project name (title). 
+            Provides 'capex' spend for each ministry by the programme and project name (title). 
             It includes spend from the past two years as well as the current budgeted spend. 
             It contains allocation for 'capex' for each ministry by each programme and the project
             title. It includes funding source either government or foreign funded. Other information 
@@ -549,3 +549,26 @@ def dict_as_text(table: str | None = None) -> str:
         lines.append("")
     return "\n".join(lines)
 
+def class_to_dict() -> list:
+    list_values = []
+    
+    for k in DATA_DICTIONARY.keys():
+        dict_value = {}
+        dict_value['table_name'] = k
+        dict_value['description'] = DATA_DICTIONARY[k].description
+        dict_value['join_hints'] = DATA_DICTIONARY[k].join_hints
+        dict_value['primary_keys'] = DATA_DICTIONARY[k].primary_keys
+        dict_value['grain'] = DATA_DICTIONARY[k].grain
+        temp = DATA_DICTIONARY[k].columns
+        list_columns = []
+        for key, value in temp.items():
+            temp_dict = {}
+            temp_dict['name'] = key
+            temp_dict['description'] = value.description
+            temp_dict['example'] = value.example
+            list_columns.append(temp_dict)
+            
+        dict_value['columns'] = list_columns
+        list_values.append(dict_value)
+        
+    return list_values

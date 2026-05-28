@@ -100,7 +100,7 @@ CAPEX_DICTIONARY = {
     "foreign_actual_pre_2024": "float, total funding for the project before 2024 from foreign sources. This will be 0 if the project didn't start before 2024.",
     "foreign_actual_2024": "float, total funding for project for the year 2024 from foreign sources. This will be 0 if the project didn't start in 2024.",
     "foreign_actual_2025":  "float, total funding for project for the year 2025 from foreign sources. This will be 0 if the project didn't start in 2025.",
-    "foreing_actual_2026": "float, total funding budgeted for 2026, from foreign sources.",
+    "foreign_actual_2026": "float, total funding budgeted for 2026, from foreign sources.",
     "foreign_donor": "text based, name of the country/organization providing the foreign funding. If project is entirely locally funded this value is 'nil'.",
     "region":"text, the region that the project will benefit. In some cases it can be multiple regions or national.",
     "gov_actual_pre_2024": "float, total funding for the project before 2024 from local treasury. This will be 0 if the project didn't start before 2024.",
