@@ -33,6 +33,7 @@ class ChatAgent:
         self.agent.tool(self._get_column_metadata)
         self.agent.tool(self._get_descriptive_stats)
         self.agent.tool(self._get_ordered_data)
+        self.agent.tool(self._get_pivot_table)
 
     def analyze(self, prompt: str, analyst_deps: AnalystDeps):
         result = self.agent.run_sync(prompt, deps=analyst_deps)
@@ -64,6 +65,7 @@ class ChatAgent:
     def _get_descriptive_stats(self, ctx: RunContext[AnalystDeps]) -> Dict[str, Any]:
         """ Returns descriptive statistics for object and numeric columns"""
         limit = self._check_tool_budget(ctx)
+        print("descriptive stats")
         if limit:
             return limit
         
@@ -74,21 +76,39 @@ class ChatAgent:
 
     def _get_column_metadata(self, ctx: RunContext[AnalystDeps]) -> Dict[str, str]:
         """ Return column names and their descriptions."""
+        print("get column metadata")
         limit = self._check_tool_budget(ctx)
         if limit:
             return limit
         
         return ctx.deps.column_metadata
     
-    def _get_ordered_data(self, ctx: RunContext[AnalystDeps], columns: List[str]) -> dict:
-        """ Return dataframe as a dictionary ordered by the columns."""
-
+    def _get_pivot_table(self, ctx:RunContext[AnalystDeps], index_list: List[str],
+                         aggregation_columns: List[str]):
+        """ 
+        Return a dataframe as a dictionary pivoted on index_list column and 
+        aggregated on aggregation_columns. The aggregation will be summation
+        """
         limit = self._check_tool_budget(ctx)
         if limit:
             return limit
         
-        df = ctx.deps.df[:ctx.deps.max_rows]
-        df = df.sort_values(by=columns)
+        df = ctx.deps.df
+        df_pivot = pd.pivot_table(df, index=index_list, values=aggregation_columns,
+                                  aggfunc='sum')
+        df_pivot = df_pivot.sort_values(by=aggregation_columns, ascending=False)
+        return df_pivot[:ctx.deps.max_rows].to_dict()
+    
+    def _get_ordered_data(self, ctx: RunContext[AnalystDeps], columns: List[str]) -> dict:
+        """ Return dataframe as a dictionary ordered by the columns."""
+        print("ordered by")
+        limit = self._check_tool_budget(ctx)
+        if limit:
+            return limit
+        
+        df = ctx.deps.df.sort_values(by=columns, ascending=False)
+        df = df[:ctx.deps.max_rows]
+        
         return df.to_dict()
     
     def _check_tool_budget(self, ctx: RunContext[AnalystDeps]) -> dict[str, Any] | None:
