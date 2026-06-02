@@ -39,7 +39,6 @@ if 'db_conn' not in st.session_state:
     st.session_state.db_conn = None
 
 if st.session_state.df is None:
-    print("st.session_state.df")
     df_summary = load_csv("master_ministry_fiscal_intelligence.csv")
     st.session_state.df = df_summary.copy()
     st.session_state.df_fiscal_summary = df_summary.copy()
@@ -71,7 +70,7 @@ if "df" in st.session_state and not(st.session_state.data_loaded):
     discovery_agent_v2.db = duckdb_instance
     st.session_state.data_loaded = True
 
-input_message = st.chat_input("Ask a question about the data")
+input_message = st.chat_input("Ask a question about the budget")
 
 #discovery_model_v2.test_db()
 if input_message:
@@ -79,14 +78,17 @@ if input_message:
     with st.chat_message("assistant"):
         discovery_result_v2 = asyncio.run(discovery_agent_v2.discover_context(input_message))
         if discovery_result_v2.relevant_tables:
-            sql_query = sql_creator(json.loads(discovery_result_v2.model_dump_json(indent=2)))
-            st.write(input_message)
-            sql_result = asyncio.run(st.session_state.db_conn.query_db(sql_query))
-            temp_dict = set_column_dict(
-                discovery_agent_dict=json.loads(discovery_result_v2.model_dump_json(indent=2)))
-            analyst_deps = get_analyst_deps(sql_result, temp_dict)
-            final_result_v2 = llm_assistant_4.analyze(input_message, analyst_deps=analyst_deps)
-            st.write(final_result_v2)
+            try:
+                sql_query = sql_creator(json.loads(discovery_result_v2.model_dump_json(indent=2)))
+                st.write(input_message)
+                sql_result = asyncio.run(st.session_state.db_conn.query_db(sql_query))
+                temp_dict = set_column_dict(
+                    discovery_agent_dict=json.loads(discovery_result_v2.model_dump_json(indent=2)))
+                analyst_deps = get_analyst_deps(sql_result, temp_dict)
+                final_result_v2 = llm_assistant_4.analyze(input_message, analyst_deps=analyst_deps)
+                st.write(final_result_v2)
+            except:
+                st.write("An error occured. Please review your question and try again")
         else:
             st.write(discovery_result_v2.reasoning)
 

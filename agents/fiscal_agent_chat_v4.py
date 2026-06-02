@@ -65,7 +65,6 @@ class ChatAgent:
     def _get_descriptive_stats(self, ctx: RunContext[AnalystDeps]) -> Dict[str, Any]:
         """ Returns descriptive statistics for object and numeric columns"""
         limit = self._check_tool_budget(ctx)
-        print("descriptive stats")
         if limit:
             return limit
         
@@ -76,7 +75,6 @@ class ChatAgent:
 
     def _get_column_metadata(self, ctx: RunContext[AnalystDeps]) -> Dict[str, str]:
         """ Return column names and their descriptions."""
-        print("get column metadata")
         limit = self._check_tool_budget(ctx)
         if limit:
             return limit
@@ -101,7 +99,6 @@ class ChatAgent:
     
     def _get_ordered_data(self, ctx: RunContext[AnalystDeps], columns: List[str]) -> dict:
         """ Return dataframe as a dictionary ordered by the columns."""
-        print("ordered by")
         limit = self._check_tool_budget(ctx)
         if limit:
             return limit
