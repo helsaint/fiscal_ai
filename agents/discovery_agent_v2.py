@@ -137,6 +137,7 @@ class DiscoveryModel:
         sql = f"SELECT * FROM {self.table_name} WHERE {search_conditions}"
         # Execute against the metadata table
         result = self.db.execute(sql).df().to_json()
+        
         return result
     
 @st.cache_resource
