@@ -5,26 +5,24 @@ from pydantic_ai import Agent, RunContext
 from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.deepseek import DeepSeekProvider
 from dataclasses import dataclass
-from typing import List, Optional, Union, Any
+from typing import List, Optional, Union
 from pydantic import BaseModel, Field
 from pydantic_ai.usage import UsageLimits
+from pydantic_ai.exceptions import UsageLimitExceeded
+
+
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logging.getLogger('pydantic_ai').setLevel(logging.DEBUG)
 
 # Get environmental variables specifically LLM key
 env = Env()
 env.read_env()
 
-TOOL_CALL_LIMIT_REACHED = {
-    "tool_budget_exhausted": True,
-    "message": "Tool call budget exhausted. Finish analysis with existing information."
-}
-
 @dataclass
 class AnalystDeps:
     conn: duckdb.DuckDBPyConnection
     schema_text: str
-
-    tool_calls: int = 0
-    max_tool_call: int = 3
 
 class ColumnSpec(BaseModel):
     name: str = Field(description="Column name exactly as it appears in the table")
@@ -67,8 +65,7 @@ class DiscoveryModel:
         1 - You only have access to the {self.table_name}
         2 - Do not access any other tables
         3 - you search {self.table_name} and find the names of tables and list of columns that satisfy the user question
-        4 - If any tool returns tool_budget_exhausted=True, stop calling tools and produce your best sql query from the evidence already gathered.
-        
+
         Example:
         User: "What is the agriculture opex?"
         Librarian Logic: (Queries dictionary, finds table named 'opex' and the column 'opex_2026')
@@ -80,8 +77,7 @@ class DiscoveryModel:
         """
         
         self.agent = self.__llm_agent_init()
-        self.agent.tool(self._query_dictionary)
-        self.agent.tool(self._check_tool_budget)
+        self.agent.tool(self.query_dictionary)
         
         # In a real app, this connection would point to your DuckDB instance
         self.db = duckdb.connect(':memory:') 
@@ -105,59 +101,58 @@ class DiscoveryModel:
         """
         The first pass of the LLM Wiki pattern.
         """
-        result = await self.agent.run(question,
+        try:
+            result = await self.agent.run(question,
                                       model_settings={
-                                          "tool_choice": {
-                                              "type": "function",
-                                              "function": {"name": "_query_database"}
-                                              }
-                                              },
-                                              usage_limits=UsageLimits(request_limit=5))
+                                          "tool_choice": "auto",
+                                      },
+                                      usage_limits=UsageLimits(request_limit=3))
+        except UsageLimitExceeded:
+            return  SchemaPlan(
+                relevant_ministry=[],
+                relevant_tables=[],
+                reasoning=(
+                    "The analysis used too many AI requests before it could complete. "
+                    "Please retry with a narrower question or a smaller dataset."),
+                join_logic="",
+                joins_column=[],
+                filter_schema=[]
+                )
+
         return result.output
     
     def test_db(self):
         print("_________________discovery agent v2_____________________________")
         print(self.db.execute("SELECT * FROM DATA_SCHEMA LIMIT 0").fetch_df())
 
-    def _check_tool_budget(self, ctx: RunContext[AnalystDeps]) -> dict[str, Any] | None:
-        """ 
-        Limit tool calls
-        - increments tool_calls counter
-        - returns a sentinel payload when max_tool_call limit exceeded
-        - does not raise errors
-        """
-        deps = ctx.deps
-        deps.tool_calls += 1
-        print("DEPS TOOL CALLS: ", deps.tool_calls)
-
-        if deps.tool_calls > deps.max_tool_call:
-            return TOOL_CALL_LIMIT_REACHED
-        else:
-            return None
-
     
-    async def _query_dictionary(self, ctx: RunContext, keywords: List[str]) -> str:
+    async def query_dictionary(self, ctx: RunContext, keywords: List[str]) -> str:
         """
         Search the data dictionary for relevant tables and columns based on keywords.
         """
-
-        limit = self._check_tool_budget(ctx)
-        if limit:
-            return limit
-        
         # We build a simple search query to prune the 170 columns down
+        if (self.query_count >= 3):
+            return "TERMINATE: Limit reached. Use the information already provided to create the SchemaPlan now. Do not call any more tools."
+        
+        self.query_count += 1
+        # We build a simple search query to prune the 170 columns down
+        if (self.query_count >= 3):
+            return "TERMINATE: Limit reached. Use the information already provided to create the SchemaPlan now. Do not call any more tools."
+        
         self.query_count += 1
         search_conditions = " OR ".join([f"description LIKE '%{kw}%' OR columns LIKE '%{kw}%'" for kw in keywords])
         sql = f"SELECT * FROM {self.table_name} WHERE {search_conditions}"
         # Execute against the metadata table
-        print("SQL COUNT: ", self.query_count)
         result = self.db.execute(sql).df().to_json()
-        if (self.query_count >= 3):
-            return "TERMINATE: Limit reached. Use the information already provided to create the SchemaPlan now. Do not call any more tools."
+        
         return result
-    
+
+        
+        
+        
+
 @st.cache_resource
-def get_discovery_agent_v2(data_dictionary_table:str):
+def get_discovery_agent_v3(data_dictionary_table:str):
     return DiscoveryModel(data_dictionary_table)
 
 # Usage in your main app flow:

@@ -2,7 +2,8 @@ import streamlit as st
 import asyncio
 
 from agents.fiscal_agent_chat_v4 import get_analyst_deps, ChatAgent
-from agents.discovery_agent_v2 import get_discovery_agent_v2, SchemaPlan
+#from agents.discovery_agent_v2 import get_discovery_agent_v2, SchemaPlan
+from agents.discovery_agent_v3 import get_discovery_agent_v3, SchemaPlan
 
 from app.utils.load_csv import load_csv
 from app.utils.data_dictionary import class_to_dict
@@ -49,7 +50,7 @@ if st.session_state.df_opex is None:
     df_opex = load_csv("BudgetCurrentExpenditure2026_v3.csv")
     st.session_state.df_opex = df_opex.copy()
 
-discovery_agent_v2 = get_discovery_agent_v2(data_dictionary_table="DATA_SCHEMA")
+discovery_agent = get_discovery_agent_v3(data_dictionary_table="DATA_SCHEMA")
 data_schema = class_to_dict()
 llm_assistant_4 = ChatAgent()
 
@@ -67,30 +68,30 @@ if "df" in st.session_state and not(st.session_state.data_loaded):
                                       "opex")
     st.session_state.db_conn = QueryDB(duckdb_instance)
     
-    discovery_agent_v2.db = duckdb_instance
+    discovery_agent.db = duckdb_instance
     st.session_state.data_loaded = True
 
 input_message = st.chat_input("Ask a question about the budget")
 
 #discovery_model_v2.test_db()
 if input_message:
-    discovery_agent_v2.query_count = 0
+    discovery_agent.query_count = 0
     with st.chat_message("assistant"):
-        discovery_result_v2 = asyncio.run(discovery_agent_v2.discover_context(input_message))
-        if discovery_result_v2.relevant_tables:
+        discovery_result = asyncio.run(discovery_agent.discover_context(input_message))
+        if discovery_result.relevant_tables:
             try:
-                sql_query = sql_creator(json.loads(discovery_result_v2.model_dump_json(indent=2)))
+                sql_query = sql_creator(json.loads(discovery_result.model_dump_json(indent=2)))
                 st.write(input_message)
                 sql_result = asyncio.run(st.session_state.db_conn.query_db(sql_query))
                 temp_dict = set_column_dict(
-                    discovery_agent_dict=json.loads(discovery_result_v2.model_dump_json(indent=2)))
+                    discovery_agent_dict=json.loads(discovery_result.model_dump_json(indent=2)))
                 analyst_deps = get_analyst_deps(sql_result, temp_dict)
-                final_result_v2 = llm_assistant_4.analyze(input_message, analyst_deps=analyst_deps)
-                st.write(final_result_v2)
+                final_result = llm_assistant_4.analyze(input_message, analyst_deps=analyst_deps)
+                st.write(final_result)
             except:
                 st.write("An error occured. Please review your question and try again")
         else:
-            st.write(discovery_result_v2.reasoning)
+            st.write(discovery_result.reasoning)
 
 
 

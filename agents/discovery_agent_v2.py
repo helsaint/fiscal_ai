@@ -10,6 +10,10 @@ from pydantic import BaseModel, Field
 from pydantic_ai.usage import UsageLimits
 from pydantic_ai.exceptions import UsageLimitExceeded
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logging.getLogger('pydantic_ai').setLevel(logging.DEBUG)
+
 # Get environmental variables specifically LLM key
 env = Env()
 env.read_env()
